@@ -1,21 +1,25 @@
 import { React, useState } from "react";
-import Data from "../Data";
 import Product from "../components/Product";
+import { newProduct } from "../store/productList";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
 
 const Main = () => {
-    const [shoes, setShose] = useState(Data);
     const [count, setCount] = useState(2);
     const [isVisible, setIsVisible] = useState(true);
+    let dispatch = useDispatch();
 
-    const newData = (data) => {
-        const newList = [...shoes, ...data];
-        setShose(newList);
+    let shoesList = useSelector((state) => {
+        console.log(state.productList);
+        return state.productList;
+    });
+
+    const addData = (data) => {
         setCount(count + 1);
         if (count >= 3) {
             setIsVisible(false);
-            console.log(count);
         }
+        dispatch(newProduct(data));
     };
 
     return (
@@ -24,7 +28,7 @@ const Main = () => {
             <div className="container">
                 <div className="container">
                     <div className="row">
-                        {shoes.map((data, index) => (
+                        {shoesList.map((data, index) => (
                             <Product key={`product-${index}`} data={data} i={index + 1} />
                         ))}
                     </div>
@@ -33,10 +37,11 @@ const Main = () => {
             {isVisible && (
                 <button
                     onClick={() => {
+                        console.log(count);
                         axios
                             .get(`https://codingapple1.github.io/shop/data${count}.json`)
                             .then((res) => {
-                                newData(res.data);
+                                addData(res.data);
                             })
                             .catch((err) => {
                                 console.log(err);

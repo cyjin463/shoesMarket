@@ -1,20 +1,23 @@
 import { React, useEffect, useState } from "react";
 import { Nav } from "react-bootstrap";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { addProduct } from "../store";
 import Desc from "../components/Desc";
-import Data from "../Data";
 
 const Detail = () => {
-    const [data] = useState(Data);
     const [isVisible, setIsVisible] = useState(true);
     const [tab, setTab] = useState(0);
 
     let dispatch = useDispatch();
 
     let { id } = useParams();
-    let item = data.find((item) => `${item.id}` === id);
+
+    let shoesList = useSelector((state) => {
+        return state.productList;
+    });
+
+    let item = shoesList.find((item) => `${item.id}` === id);
 
     useEffect(() => {
         setTimeout(() => {
@@ -30,6 +33,7 @@ const Detail = () => {
                     <img
                         src={`https://codingapple1.github.io/shop/shoes${item.id + 1}.jpg`}
                         width="100%"
+                        alt=""
                     />
                 </div>
                 <div className="col-md-6">
@@ -44,7 +48,7 @@ const Detail = () => {
                                 addProduct({
                                     id: item.id,
                                     title: item.title,
-                                    count: 0,
+                                    count: 1,
                                 })
                             );
                         }}>
